@@ -50,10 +50,12 @@ const struct BOARD_Sdram_Config BOARD_Sdram_Config = {
     | SDRAMC_CR_CAS_LATENCY3
     | SDRAMC_CR_NB_BANK4
     | SDRAMC_CR_DBW
-    /* t_WR = 22ns min (t_RAS - t_RCD; see data sheet November 2015 page 55) */
-    | SDRAMC_CR_TWR(CLOCK_CYCLES_FROM_NS_MIN(22))
+    /* t_WR = 30ns min (t_RC - t_RP - t_RCD;
+     * see data sheet November 2015 page 55);
+     * add some security margin */
+    | SDRAMC_CR_TWR(CLOCK_CYCLES_FROM_NS_MIN(40))
     | SDRAMC_CR_TRC_TRFC(CLOCK_CYCLES_FROM_NS_MIN(60))
-    | SDRAMC_CR_TRP(CLOCK_CYCLES_FROM_NS_MIN(21))
+    | SDRAMC_CR_TRP(CLOCK_CYCLES_FROM_NS_MIN(15))
     | SDRAMC_CR_TRCD(CLOCK_CYCLES_FROM_NS_MIN(15))
     | SDRAMC_CR_TRAS(CLOCK_CYCLES_FROM_NS_MIN(37))
     | SDRAMC_CR_TXSR(CLOCK_CYCLES_FROM_NS_MIN(67)),
