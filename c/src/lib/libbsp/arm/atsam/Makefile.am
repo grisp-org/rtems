@@ -49,6 +49,7 @@ include_bsp_HEADERS += ../../shared/include/irq-info.h
 include_bsp_HEADERS += ../../shared/include/stackalloc.h
 include_bsp_HEADERS += ../shared/include/start.h
 include_bsp_HEADERS += ../shared/armv7m/include/armv7m-irq.h
+include_bsp_HEADERS += include/counter-rtt.h
 include_bsp_HEADERS += include/irq.h
 include_bsp_HEADERS += include/pin-config.h
 include_bsp_HEADERS += include/atsam-i2c.h
@@ -418,6 +419,7 @@ libbsp_a_SOURCES += console/debug-console.c
 # Clock
 libbsp_a_SOURCES += ../../shared/clockdrv_shell.h
 libbsp_a_SOURCES += ../shared/armv7m/clock/armv7m-clock-config.c
+libbsp_a_SOURCES += clock/counter-rtt.c
 libbsp_a_SOURCES += clock/systick-freq.c
 
 # Timer
