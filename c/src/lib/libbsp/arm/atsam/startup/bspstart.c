@@ -17,6 +17,7 @@
 #include <bsp/irq.h>
 #include <bsp/irq-generic.h>
 #include <bsp/linker-symbols.h>
+#include <bsp/counter-rtt.h>
 
 #include <chip.h>
 
@@ -34,4 +35,5 @@ void bsp_start(void)
     bsp_section_nocacheheap_begin,
     (uintptr_t) bsp_section_nocacheheap_size
   );
+  atsam_rtt_initialize();
 }
