@@ -469,7 +469,9 @@ void _CPU_Context_Initialize(
                    : "=r" (_error)          \
                    : "0" (_error)           \
                    : "r0" );                \
-     while (1);                             \
+     while (1) {                            \
+       __asm__ volatile ("wfi" : : : );     \
+     }                                      \
    } while (0);
 
 /**
