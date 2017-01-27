@@ -394,7 +394,7 @@ libbsp_a_SOURCES += libraries/libboard/source/dbg_console.c
 # Startup
 libbsp_a_SOURCES += ../shared/startup/bsp-start-memcpy.S
 libbsp_a_SOURCES += ../shared/armv7m/startup/bspreset.c
-libbsp_a_SOURCES += ../shared/armv7m/startup/armv7m-cpucounter.c
+#libbsp_a_SOURCES += ../shared/armv7m/startup/armv7m-cpucounter.c
 libbsp_a_SOURCES += startup/bspstart.c
 libbsp_a_SOURCES += startup/bspstarthooks.c
 libbsp_a_SOURCES += startup/pin-config.c
