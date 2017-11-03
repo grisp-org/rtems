@@ -449,6 +449,9 @@ libbsp_a_SOURCES += spi/sc16is752.c
 libbsp_a_SOURCES += ../../shared/tod.c
 libbsp_a_SOURCES += rtc/rtc-config.c
 
+# random number generator
+libbsp_a_SOURCES += random/random.c
+
 # Includes
 libbsp_a_CPPFLAGS += -I$(srcdir)/../shared/CMSIS/Include
 libbsp_a_CPPFLAGS += -I$(srcdir)/libraries/libboard
