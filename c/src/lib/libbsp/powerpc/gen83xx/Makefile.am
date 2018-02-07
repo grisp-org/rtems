@@ -66,6 +66,7 @@ libbsp_a_SOURCES += \
 	../../shared/bspgetworkarea.c \
         ../../shared/src/bsp-uboot-board-info.c \
         ../shared/uboot_getenv.c
+libbsp_a_SOURCES += startup/getentropy-cpucounter.c
 
 # clock
 libbsp_a_SOURCES += ../shared/clock/clock.c
