@@ -344,19 +344,26 @@ fat_file_read(
         c = MIN(count, (fs_info->vol.bpc - ofs));
 
         sec = fat_cluster_num_to_sector_num(fs_info, cur_cln);
+
+        save_cln = cur_cln;
+        rc = fat_get_fat_cluster(fs_info, cur_cln, &cur_cln);
+        if ( rc != RC_OK )
+            return rc;
+
+	{
+           uint32_t s = fat_cluster_num_to_sector_num(fs_info, cur_cln);
+            uint32_t          blk = fat_sector_num_to_block_num (fs_info, s);
+           rtems_bdbuf_peek(fs_info->vol.dd, blk);
+	}
+
         sec += (ofs >> fs_info->vol.sec_log2);
         byte = ofs & (fs_info->vol.bps - 1);
-
         ret = _fat_block_read(fs_info, sec, byte, c, buf + cmpltd);
         if ( ret < 0 )
             return -1;
 
         count -= c;
         cmpltd += c;
-        save_cln = cur_cln;
-        rc = fat_get_fat_cluster(fs_info, cur_cln, &cur_cln);
-        if ( rc != RC_OK )
-            return rc;
 
         ofs = 0;
     }

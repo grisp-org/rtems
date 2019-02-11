@@ -139,6 +139,7 @@ typedef struct rtems_bdbuf_cache
   rtems_bdbuf_group*  groups;            /**< The groups. */
   rtems_id            read_ahead_task;   /**< Read-ahead task */
   rtems_chain_control read_ahead_chain;  /**< Read-ahead request chain */
+  rtems_chain_control read_ahead_chain2;  /**< Read-ahead request chain */
   bool                read_ahead_enabled; /**< Read-ahead enabled */
   rtems_status_code   init_status;       /**< The initialization status */
   pthread_once_t      once;
@@ -1329,6 +1330,7 @@ rtems_bdbuf_do_init (void)
   rtems_chain_initialize_empty (&bdbuf_cache.modified);
   rtems_chain_initialize_empty (&bdbuf_cache.sync);
   rtems_chain_initialize_empty (&bdbuf_cache.read_ahead_chain);
+  rtems_chain_initialize_empty (&bdbuf_cache.read_ahead_chain2);
 
   rtems_mutex_set_name (&bdbuf_cache.lock, "bdbuf lock");
   rtems_mutex_set_name (&bdbuf_cache.sync_lock, "bdbuf sync lock");
@@ -2108,6 +2110,50 @@ rtems_bdbuf_read (rtems_disk_device   *dd,
   rtems_bdbuf_unlock_cache ();
 
   *bd_ptr = bd;
+
+  return sc;
+}
+
+rtems_status_code
+rtems_bdbuf_peek (rtems_disk_device *dd, rtems_blkdev_bnum block)
+{
+  rtems_status_code sc;
+  rtems_blkdev_bnum media_block;
+
+  rtems_bdbuf_lock_cache ();
+
+  if (bdbuf_cache.read_ahead_enabled)
+  {
+    sc = rtems_bdbuf_get_media_block (dd, block, &media_block);
+    if (sc == RTEMS_SUCCESSFUL)
+    {
+      rtems_bdbuf_buffer *bd;
+
+      bd = rtems_bdbuf_get_buffer_for_read_ahead (dd, media_block);
+      if (bd != NULL) {
+        rtems_chain_control *chain;
+
+        rtems_bdbuf_set_state (bd, RTEMS_BDBUF_STATE_TRANSFER);
+
+        chain = &bdbuf_cache.read_ahead_chain2;
+        if (rtems_chain_is_empty (chain))
+        {
+          sc = rtems_event_send (bdbuf_cache.read_ahead_task,
+                                 RTEMS_BDBUF_READ_AHEAD_WAKE_UP);
+          if (sc != RTEMS_SUCCESSFUL)
+            rtems_bdbuf_fatal (RTEMS_BDBUF_FATAL_RA_WAKE_UP);
+        }
+
+        rtems_chain_append_unprotected (chain, &bd->link);
+      }
+    }
+  }
+  else
+  {
+    sc = RTEMS_SUCCESSFUL;
+  }
+
+  rtems_bdbuf_unlock_cache ();
 
   return sc;
 }
@@ -2934,6 +2980,7 @@ rtems_bdbuf_read_ahead_task (rtems_task_argument arg)
     rtems_bdbuf_wait_for_event (RTEMS_BDBUF_READ_AHEAD_WAKE_UP);
     rtems_bdbuf_lock_cache ();
 
+    chain = &bdbuf_cache.read_ahead_chain;
     while ((node = rtems_chain_get_unprotected (chain)) != NULL)
     {
       rtems_disk_device *dd =
@@ -2974,6 +3021,18 @@ rtems_bdbuf_read_ahead_task (rtems_task_argument arg)
       {
         dd->read_ahead.trigger = RTEMS_DISK_READ_AHEAD_NO_TRIGGER;
       }
+    }
+
+    chain = &bdbuf_cache.read_ahead_chain2;
+    while ((node = rtems_chain_get_unprotected (chain)) != NULL)
+    {
+      rtems_bdbuf_buffer *bd;
+      rtems_disk_device  *dd;
+
+      bd = (rtems_bdbuf_buffer *) node;
+      dd = bd->dd;
+      ++dd->stats.read_ahead_transfers;
+      rtems_bdbuf_execute_read_request (bd->dd, bd, 1);
     }
 
     rtems_bdbuf_unlock_cache ();

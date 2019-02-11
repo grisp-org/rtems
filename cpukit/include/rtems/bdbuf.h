@@ -539,6 +539,9 @@ rtems_bdbuf_read (
   rtems_bdbuf_buffer** bd
 );
 
+rtems_status_code
+rtems_bdbuf_peek (rtems_disk_device *dd, rtems_blkdev_bnum block);
+
 /**
  * Release the buffer obtained by a read call back to the cache. If the buffer
  * was obtained by a get call and was not already in the cache the release
