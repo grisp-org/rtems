@@ -35,6 +35,11 @@
 #define CPU_CACHE_SUPPORT_PROVIDES_DISABLE_DATA
 #endif
 
+static inline bool is_data_cache_aligned(const void *addr)
+{
+  return (((intptr_t)addr & (CPU_DATA_CACHE_ALIGNMENT - 1)) == 0);
+}
+
 static inline void _CPU_cache_flush_1_data_line(const void *d_addr)
 {
   arm_cache_l1_flush_1_data_line(d_addr);
@@ -46,6 +51,8 @@ _CPU_cache_flush_data_range(
   size_t      n_bytes
 )
 {
+  _Assert(is_data_cache_aligned(d_addr));
+  _Assert(is_data_cache_aligned((void*)n_bytes));
   _ARM_Data_synchronization_barrier();
   arm_cache_l1_flush_data_range(
     d_addr,
@@ -68,6 +75,8 @@ _CPU_cache_invalidate_data_range(
   size_t     n_bytes
 )
 {
+  _Assert(is_data_cache_aligned(addr_first));
+  _Assert(is_data_cache_aligned((void*)n_bytes));
   arm_cache_l1_invalidate_data_range(
     addr_first,
     n_bytes
