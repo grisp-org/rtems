@@ -292,6 +292,7 @@ librtemscpu_a_SOURCES += libmisc/dumpbuf/dumpbuf.c
 librtemscpu_a_SOURCES += libmisc/fb/mw_print.c
 librtemscpu_a_SOURCES += libmisc/fb/mw_uid.c
 librtemscpu_a_SOURCES += libmisc/fsmount/fsmount.c
+librtemscpu_a_SOURCES += libmisc/ioaccess/iocopy.c
 librtemscpu_a_SOURCES += libmisc/monitor/mon-command.c
 librtemscpu_a_SOURCES += libmisc/monitor/mon-config.c
 librtemscpu_a_SOURCES += libmisc/monitor/mon-driver.c

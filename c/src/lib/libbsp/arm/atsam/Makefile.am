@@ -143,9 +143,6 @@ librtemsbsp_a_SOURCES += ../../../../../../bsps/arm/atsam/spi/sc16is752.c
 librtemsbsp_a_SOURCES += ../../../../../../bsps/shared/dev/rtc/rtc-support.c
 librtemsbsp_a_SOURCES += ../../../../../../bsps/arm/atsam/rtc/rtc-config.c
 
-# Helper functions
-librtemsbsp_a_SOURCES += ../../../../../../bsps/arm/atsam/start/iocopy.c
-
 # Includes
 librtemsbsp_a_CPPFLAGS += -I$(RTEMS_SOURCE_ROOT)/bsps/arm/atsam/contrib/libraries/libboard
 librtemsbsp_a_CPPFLAGS += -I$(RTEMS_SOURCE_ROOT)/bsps/arm/atsam/contrib/libraries/libboard/include

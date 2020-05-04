@@ -107,6 +107,7 @@ include_rtems_HEADERS += include/rtems/imfs.h
 include_rtems_HEADERS += include/rtems/init.h
 include_rtems_HEADERS += include/rtems/inttypes.h
 include_rtems_HEADERS += include/rtems/io.h
+include_rtems_HEADERS += include/rtems/iocopy.h
 include_rtems_HEADERS += include/rtems/ioimpl.h
 include_rtems_HEADERS += include/rtems/iosupp.h
 include_rtems_HEADERS += include/rtems/irq-extension.h
