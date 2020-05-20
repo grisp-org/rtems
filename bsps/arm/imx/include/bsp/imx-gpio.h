@@ -127,28 +127,49 @@ rtems_vector_number imx_gpio_get_irq_of_node(
  * most FDTs based on the Linux one.
  */
 struct imx_gpio *imx_gpio_get_by_index(unsigned idx);
+
+/**
+ * Return the gpio management structure based on the GPIO registers.
+ */
+struct imx_gpio *imx_gpio_get_by_register(void *regs);
+
+/**
+ * Get the name of the gpio.
+ */
+const char *imx_gpio_get_name(struct imx_gpio *imx_gpio);
+
 /**
  * Set the value of the output pin. @a set will be shifted and masked (in that
  * order) based on the values of @a pin.
  */
 void imx_gpio_set_output(struct imx_gpio_pin *pin, uint32_t set);
+
+/**
+ * Toggle the value of the output pin.
+ */
+void imx_gpio_toggle_output(struct imx_gpio_pin *pin);
+
 /**
  * Get the value of the input pin. The input value will be masked and shifted
  * (in that order) based on the values of @a pin.
  */
 uint32_t imx_gpio_get_input(struct imx_gpio_pin *pin);
+
 /**
  * Disable the interrupt of the given @a pin.
  */
 void imx_gpio_int_disable(struct imx_gpio_pin *pin);
+
 /**
  * Enable the interrupt of the given @a pin.
  */
 void imx_gpio_int_enable(struct imx_gpio_pin *pin);
+
 /**
  * Read the interrupt status register for the given @a pin.
  */
 uint32_t imx_gpio_get_isr(struct imx_gpio_pin *pin);
+
 /**
  * Clear the interrupt status register for the given @a pin.
  */

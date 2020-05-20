@@ -66,6 +66,11 @@ struct imx_gpio {
 /* The GPIO modules. These will be initialized based on the FDT alias table. */
 struct imx_gpio imx_gpio[IMX_MAX_GPIO_MODULES];
 
+const char *imx_gpio_get_name(struct imx_gpio *imx_gpio)
+{
+  return imx_gpio->name;
+}
+
 static void imx_gpio_attach(void)
 {
   size_t i;
@@ -115,7 +120,7 @@ struct imx_gpio *imx_gpio_get_by_index(unsigned idx)
   return NULL;
 }
 
-static struct imx_gpio *imx_gpio_get_by_register(void *regs)
+struct imx_gpio *imx_gpio_get_by_register(void *regs)
 {
   size_t i;
 
@@ -304,6 +309,14 @@ void imx_gpio_set_output(struct imx_gpio_pin *pin, uint32_t set)
   set &= pin->mask;
   rtems_interrupt_lock_acquire(&pin->gpio->lock, &lock_context);
   pin->gpio->regs->dr = (pin->gpio->regs->dr & ~pin->mask) | set;
+  rtems_interrupt_lock_release(&pin->gpio->lock, &lock_context);
+}
+
+void imx_gpio_toggle_output(struct imx_gpio_pin *pin)
+{
+  rtems_interrupt_lock_context lock_context;
+  rtems_interrupt_lock_acquire(&pin->gpio->lock, &lock_context);
+  pin->gpio->regs->dr = (pin->gpio->regs->dr ^ pin->mask);
   rtems_interrupt_lock_release(&pin->gpio->lock, &lock_context);
 }
 
