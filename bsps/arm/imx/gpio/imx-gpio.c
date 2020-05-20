@@ -204,7 +204,8 @@ rtems_status_code imx_gpio_init_from_fdt_property (
 
   fdt = bsp_fdt_get();
   val = fdt_getprop(fdt, node_offset, property, &len);
-  if (val == NULL || (len % (int)pin_length_bytes != 0)) {
+  if (val == NULL || (len % pin_length_bytes != 0) ||
+      (index >= len / pin_length_bytes)) {
     sc = RTEMS_UNSATISFIED;
   }
   if (sc == RTEMS_SUCCESSFUL) {
@@ -229,7 +230,7 @@ rtems_status_code imx_gpio_init_from_fdt_property (
     imx_gpio_init(pin);
   }
 
-  return RTEMS_SUCCESSFUL;
+  return sc;
 }
 
 rtems_vector_number imx_gpio_get_irq_of_node(
