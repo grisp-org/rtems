@@ -372,7 +372,8 @@ static int imx_ecspi_check_messages(
         ~(SPI_CPHA | SPI_CPOL | SPI_LOOP | SPI_NO_CS)) != 0) {
       return -EINVAL;
     }
-    if (msg->cs > IMX_ECSPI_MAX_CHIPSELECTS || !bus->cspins[msg->cs].valid) {
+    if ((msg->mode & SPI_NO_CS) == 0 &&
+        (msg->cs > IMX_ECSPI_MAX_CHIPSELECTS || !bus->cspins[msg->cs].valid)) {
       return -EINVAL;
     }
 
@@ -510,7 +511,7 @@ int spi_bus_register_imx(const char *bus_path, const char *alias_or_path)
   }
 
   bus->base.max_speed_hz = imx_ccm_ecspi_hz();
-  bus->base.delay_usecs = 1;
+  bus->base.delay_usecs = 0;
   bus->regs = imx_get_reg_of_node(fdt, node);
   bus->irq = imx_get_irq_of_node(fdt, node, 0);
 
