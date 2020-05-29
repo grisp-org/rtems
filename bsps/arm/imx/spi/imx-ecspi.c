@@ -313,11 +313,11 @@ static void imx_ecspi_next_msg(imx_ecspi_bus *bus, volatile imx_ecspi *regs)
         msg->mode,
         msg->cs
       );
-      if ((msg->mode & SPI_NO_CS) != 0) {
-        imx_ecspi_set_chipsel(bus, IMX_ECSPI_CS_NONE);
-      } else {
-        imx_ecspi_set_chipsel(bus, msg->cs);
-      }
+    }
+    if ((msg->mode & SPI_NO_CS) != 0) {
+      imx_ecspi_set_chipsel(bus, IMX_ECSPI_CS_NONE);
+    } else {
+      imx_ecspi_set_chipsel(bus, msg->cs);
     }
 
     bus->todo = msg->len;
@@ -374,6 +374,9 @@ static int imx_ecspi_check_messages(
     }
     if ((msg->mode & SPI_NO_CS) == 0 &&
         (msg->cs > IMX_ECSPI_MAX_CHIPSELECTS || !bus->cspins[msg->cs].valid)) {
+      return -EINVAL;
+    }
+    if (msg->cs_change != 0) {
       return -EINVAL;
     }
 
